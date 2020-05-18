@@ -10,7 +10,14 @@ No honestly I just wanted some stable bindings I could use for my new pet-peeve 
 
 ## Installation
 
-It's 5 am dude, I am going to sleep now lol.
+Note: The example is not working due to an Authentication error which I am currently investigating
+Apparently our friends @google changed their auth gateway.
+
+```
+go mod download
+go build -o build/example main/example.go
+./build/example
+```
 
 ## Credits
 
