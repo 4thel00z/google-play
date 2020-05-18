@@ -323,7 +323,7 @@ func (api *GooglePlayApi) parseResponse(response *http.Response) (map[string]str
 		if !strings.Contains(d, "=") {
 			continue
 		}
-		splitN := strings.SplitN(d, "=", 1)
+		splitN := strings.SplitN(d, "=", 2)
 		k, v := splitN[0], splitN[1]
 		index := strings.ToLower(strings.TrimSpace(k))
 		structuredData[index] = strings.TrimSpace(v)
@@ -432,6 +432,7 @@ func (api *GooglePlayApi) GetSecondRoundToken(token string, params map[string]st
 	if api.GsfId != 0 {
 		params["androidId"] = fmt.Sprintf("%x", api.GsfId)
 	}
+	params["service"] = OauthService
 	params["Token"] = token
 	params["check_email"] = "1"
 	params["token_request_options"] = "CAA4AQ=="
@@ -612,7 +613,7 @@ func (api *GooglePlayApi) Browse(cat, subCat *string) (*pkg.BrowseResponse, erro
 }
 
 func (api *GooglePlayApi) List(cat string, subCat *string, nResults, offset *int) ([]*pkg.DocV2, error) {
-	path := BrowseUrl + "?c=3" + fmt.Sprintf("&cat=%s", url.QueryEscape(cat))
+	path := ListUrl + "?c=3" + fmt.Sprintf("&cat=%s", url.QueryEscape(cat))
 	if subCat != nil {
 		path += fmt.Sprintf("&ctr=%s", url.QueryEscape(*subCat))
 	}
