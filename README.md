@@ -14,6 +14,6 @@ It's 5 am dude, I am going to sleep now lol.
 
 ## Credits
 
-Thanks to my dude [https://github.com/NoMore201/googleplay-api](googleplay-api) assembling this code was a matter of
+Thanks to my dude [googleplay-api](https://github.com/NoMore201/googleplay-api) assembling this code was a matter of
 1 day (full of cursing etc.)
 Thanks for your efforts
