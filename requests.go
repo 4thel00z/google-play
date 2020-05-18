@@ -74,7 +74,7 @@ func PostForm(target string, params, headers map[string]string, proxy *http.Tran
 	if err != nil {
 		return nil, err
 	}
-
+	request.PostForm = map[string][]string{}
 	if params != nil && len(params) != 0 {
 		for k, v := range params {
 			request.PostForm.Set(k, v)
