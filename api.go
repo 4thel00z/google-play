@@ -212,7 +212,7 @@ func (api *GooglePlayApi) UploadDeviceConfig(email, ac2dmToken string) error {
 
 }
 
-func (api *GooglePlayApi) loginWithEmailAndPassword(email, password string) error {
+func (api *GooglePlayApi) LoginWithEmailAndPassword(email, password string) error {
 
 	var (
 		ac2dmToken string
@@ -264,7 +264,7 @@ func (api *GooglePlayApi) loginWithEmailAndPassword(email, password string) erro
 	return nil
 }
 
-func (api *GooglePlayApi) loginWithGsfIdAndAuthSubToken(gsfId, authSubToken string) error {
+func (api *GooglePlayApi) LoginWithGsfIdAndAuthSubToken(gsfId, authSubToken string) error {
 	gsfIdInt, err := strconv.Atoi(gsfId)
 	if err != nil {
 		return err
