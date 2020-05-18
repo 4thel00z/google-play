@@ -224,6 +224,8 @@ func (api *GooglePlayApi) LoginWithEmailAndPassword(email, password string) erro
 	params["callerPkg"] = "com.google.android.gms"
 	headers := api.Device.getAuthHeader(int(api.GsfId))
 	headers["app"] = "com.google.android.gsm"
+	fmt.Println(params)
+	fmt.Println(headers)
 	response, err := PostForm(AuthUrl, params, headers, api.Proxy, nil)
 	if err != nil {
 		return err
@@ -837,4 +839,35 @@ func (api *GooglePlayApi) Log(docId string) (*pkg.ResponseWrapper, error) {
 		Timestamp:                 &timestamp,
 	}
 	return api.CallPostApiV2(LogUrl, nil, strings.NewReader(request.String()))
+}
+
+func (api *GooglePlayApi) FetchAASToken(email, password string) (string, error) {
+
+	encPassword := encrypt(email, password)
+	params := map[string]string{
+		"Email":                        email,
+		"EncryptedPasswd":              encPassword,
+		"add_account":                  "1",
+		"accountType":                  "HOSTED_OR_GOOGLE",
+		"google_play_services_version": "11951438",
+		"has_permission":               "1",
+		"source":                       "android",
+		"device_country":               "de",
+		"lang":                         "de",
+		"client_sig":                   "38918a453d07199354f8b19af05ec6562ced5788",
+		"callerSig":                    "38918a453d07199354f8b19af05ec6562ced5788",
+		"service":                      "sj",
+		"callerPkg":                    "com.google.android.gms",
+	}
+	response, err := PostForm(AuthUrl, params, api.Device.getAuthHeader(int(api.GsfId)), api.Proxy, nil)
+	if err != nil {
+		return "", err
+	}
+	content, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Println(string(content))
+	return "",nil
 }
