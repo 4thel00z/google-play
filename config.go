@@ -12,42 +12,42 @@ import (
 type Device struct {
 	Locale               string
 	Timezone             string
-	Platforms            string   `json:"platforms"`
-	Name                 string   `json:"name"`
-	UserReadableName     []string `json:"userreadablename"`
-	BuildHardware        string   `json:"build.hardware"`
-	BuildRadio           string   `json:"build.radio"`
-	BuildBootloader      string   `json:"build.bootloader"`
-	BuildFingerprint     string   `json:"build.fingerprint"`
-	BuildBrand           string   `json:"build.brand"`
-	BuildDevice          string   `json:"build.device"`
-	BuildVersionSdkInt   string   `json:"build.version.sdk_int"`
-	BuildModel           string   `json:"build.model"`
-	BuildManufacturer    string   `json:"build.manufacturer"`
-	BuildProduct         string   `json:"build.product"`
-	BuildId              string   `json:"build.id"`
-	BuildVersionRelease  string   `json:"build.version.release"`
-	Touchscreen          string   `json:"touchscreen"`
-	Keyboard             string   `json:"keyboard"`
-	Navigation           string   `json:"navigation"`
-	ScreenLayout         string   `json:"screenlayout"`
-	HasHardKeyboard      string   `json:"hashardkeyboard"`
-	HasFiveWayNavigation string   `json:"hasfivewaynavigation"`
-	GlVersion            string   `json:"gl.version"`
-	ScreenDensity        string   `json:"screen.density"`
-	ScreenWidth          string   `json:"screen.width"`
-	ScreenHeight         string   `json:"screen.height"`
-	SharedLibraries      string   `json:"sharedlibraries"`
-	Features             string   `json:"features"`
-	Locales              string   `json:"locales"`
-	GsfVersion           string   `json:"gsf.version"`
-	VendingVersion       string   `json:"vending.version"`
-	VendingVersionString []string `json:"vending.versionstring"`
-	CellOperator         string   `json:"celloperator"`
-	SimOperator          string   `json:"simoperator"`
-	Client               string   `json:"client"`
-	GlExtensions         string   `json:"gl.extensions"`
-	Roaming              string   `json:"roaming"`
+	Platforms            string      `json:"platforms"`
+	Name                 string      `json:"name"`
+	UserReadableName     []string    `json:"userreadablename"`
+	BuildHardware        string      `json:"build.hardware"`
+	BuildRadio           string      `json:"build.radio"`
+	BuildBootloader      string      `json:"build.bootloader"`
+	BuildFingerprint     string      `json:"build.fingerprint"`
+	BuildBrand           string      `json:"build.brand"`
+	BuildDevice          string      `json:"build.device"`
+	BuildVersionSdkInt   string      `json:"build.version.sdk_int"`
+	BuildModel           interface{} `json:"build.model"`
+	BuildManufacturer    string      `json:"build.manufacturer"`
+	BuildProduct         string      `json:"build.product"`
+	BuildId              string      `json:"build.id"`
+	BuildVersionRelease  string      `json:"build.version.release"`
+	Touchscreen          string      `json:"touchscreen"`
+	Keyboard             string      `json:"keyboard"`
+	Navigation           string      `json:"navigation"`
+	ScreenLayout         string      `json:"screenlayout"`
+	HasHardKeyboard      string      `json:"hashardkeyboard"`
+	HasFiveWayNavigation string      `json:"hasfivewaynavigation"`
+	GlVersion            string      `json:"gl.version"`
+	ScreenDensity        string      `json:"screen.density"`
+	ScreenWidth          string      `json:"screen.width"`
+	ScreenHeight         string      `json:"screen.height"`
+	SharedLibraries      string      `json:"sharedlibraries"`
+	Features             string      `json:"features"`
+	Locales              string    `json:"locales"`
+	GsfVersion           string      `json:"gsf.version"`
+	VendingVersion       string      `json:"vending.version"`
+	VendingVersionString []string    `json:"vending.versionstring"`
+	CellOperator         string      `json:"celloperator"`
+	SimOperator          string      `json:"simoperator"`
+	Client               string      `json:"client"`
+	GlExtensions         string      `json:"gl.extensions"`
+	Roaming              string      `json:"roaming"`
 }
 
 type DeviceName struct {
@@ -221,6 +221,20 @@ func (self Device) getUserAgent() string {
 		"isWideScreen=0," +
 		"supportedAbis=%s)"
 
+	var buildModel string
+	switch self.BuildModel.(type) {
+	case string:
+		{
+			buildModel = self.BuildModel.(string)
+		}
+
+	default:
+	case []string:
+		{
+			buildModel = strings.Join(self.BuildModel.([]string), " ")
+		}
+	}
+
 	return fmt.Sprintf(template,
 		versionString,
 		self.VendingVersion,
@@ -229,7 +243,7 @@ func (self Device) getUserAgent() string {
 		self.BuildHardware,
 		self.BuildProduct,
 		self.BuildVersionRelease,
-		self.BuildModel,
+		buildModel,
 		self.BuildId,
 		strings.ReplaceAll(self.Platforms, ",", ";"))
 }
@@ -334,7 +348,19 @@ func (self Device) GetAndroidBuild() (*pkg.AndroidBuildProto, error) {
 	}
 	otaInstalled := false
 	now := time.Now().Unix() / 1000
+	var buildModel string
+	switch self.BuildModel.(type) {
+	case string:
+		{
+			buildModel = self.BuildModel.(string)
+		}
 
+	default:
+	case []string:
+		{
+			buildModel = strings.Join(self.BuildModel.([]string), " ")
+		}
+	}
 	androidBuild := pkg.AndroidBuildProto{}
 	androidBuild.Id = &self.BuildFingerprint
 	androidBuild.Product = &self.BuildHardware
@@ -343,7 +369,7 @@ func (self Device) GetAndroidBuild() (*pkg.AndroidBuildProto, error) {
 	androidBuild.Bootloader = &self.BuildBootloader
 	androidBuild.Device = &self.BuildDevice
 	androidBuild.SdkVersion = buildVersionSdkInt
-	androidBuild.Model = &self.BuildModel
+	androidBuild.Model = &buildModel
 	androidBuild.Manufacturer = &self.BuildManufacturer
 	androidBuild.BuildProduct = &self.BuildProduct
 	androidBuild.Client = &self.Client
